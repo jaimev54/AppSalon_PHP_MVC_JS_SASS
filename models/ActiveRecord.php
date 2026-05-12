@@ -129,6 +129,12 @@ class ActiveRecord {
         $resultado = self::consultarSQL($query);
         return array_shift( $resultado ) ;
     }
+    //consulta plana de aql
+    public static function SQL($consulta) {
+        $query = $consulta;
+        $resultado = self::consultarSQL($consulta);
+        return $resultado ;
+    }
 
     // crea un nuevo registro
     public function crear() {
@@ -138,9 +144,20 @@ class ActiveRecord {
         // Insertar en la base de datos
         $query = " INSERT INTO " . static::$tabla . " ( ";
         $query .= join(', ', array_keys($atributos));
-        $query .= " ) VALUES (' "; 
-        $query .= join("', '", array_values($atributos));
-        $query .= " ') ";
+        $query .= " ) VALUES ( "; 
+        
+        $valores = [];
+        foreach($atributos as $value) {
+            if(is_null($value) || $value === '') {
+                $valores[] = "NULL";
+            } else {
+                $valores[] = "'" . $value . "'";
+            }
+        }
+        $query .= join(', ', $valores);
+        $query .= " ) ";
+
+        
 
         // Resultado de la consulta
         $resultado = self::$db->query($query);

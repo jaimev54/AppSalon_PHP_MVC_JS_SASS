@@ -52,7 +52,11 @@ class LoginController {
     }
 
     public static function logout() {
-        echo "LoginController::logout() called";
+        session_start();
+
+        $_SESSION = [];
+
+        header('Location: /');
     }
 
     public static function olvide(Router $router) {
